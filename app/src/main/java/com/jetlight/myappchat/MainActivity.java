@@ -61,10 +61,18 @@ public class MainActivity extends Activity {
 
         mProgressBar.setVisibility(ProgressBar.INVISIBLE);
 
+        mSendButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Message message = new Message(mMessageEditText.getText().toString(),mUsername,null);
+                databaseReference.push().setValue(message);
+                mMessageEditText.setText("");
+            }
+        });
+
         mPhotoPickerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // TODO: Fire an intent to show an image picker
             }
         });
 
@@ -102,6 +110,8 @@ public class MainActivity extends Activity {
             }
         });
     }
+
+
 /*
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

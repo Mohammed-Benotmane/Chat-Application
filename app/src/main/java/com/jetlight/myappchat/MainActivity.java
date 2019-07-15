@@ -44,7 +44,7 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
         mUsername = ANONYMOUS;
         firebaseDatabase = FirebaseDatabase.getInstance();
         databaseReference = firebaseDatabase.getReference().child("messages");
@@ -64,6 +64,7 @@ public class MainActivity extends Activity {
         mSendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 Message message = new Message(mMessageEditText.getText().toString(),mUsername,null);
                 databaseReference.push().setValue(message);
                 mMessageEditText.setText("");
@@ -100,15 +101,7 @@ public class MainActivity extends Activity {
         mMessageEditText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(DEFAULT_MSG_LENGTH_LIMIT)});
 
 
-        mSendButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
 
-
-                // Clear input box
-                mMessageEditText.setText("");
-            }
-        });
     }
 
 

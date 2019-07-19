@@ -108,7 +108,8 @@ public class MainActivity extends Activity {
         childEventListener = new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                dataSnapshot.getValue(Message.class);
+                Message message = dataSnapshot.getValue(Message.class);
+                mMessageAdapter.add(message);
             }
 
             @Override

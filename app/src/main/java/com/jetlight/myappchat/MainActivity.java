@@ -61,21 +61,13 @@ public class MainActivity extends Activity {
         mMessageEditText = (EditText) findViewById(R.id.messageEditText);
         mSendButton = (Button) findViewById(R.id.sendButton);
 
-        List<Message> friendlyMessages = new ArrayList<>();
-        mMessageAdapter = new MessageAdapter(this, R.layout.item_message, friendlyMessages);
+        final List<Message> messages = new ArrayList<>();
+        mMessageAdapter = new MessageAdapter(this, R.layout.item_message, messages);
         mMessageListView.setAdapter(mMessageAdapter);
 
         mProgressBar.setVisibility(ProgressBar.INVISIBLE);
 
-        mSendButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
 
-                Message message = new Message(mMessageEditText.getText().toString(),mUsername,null);
-                databaseReference.push().setValue(message);
-                mMessageEditText.setText("");
-            }
-        });
 
         mPhotoPickerButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -105,11 +97,23 @@ public class MainActivity extends Activity {
             }
         });
         mMessageEditText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(DEFAULT_MSG_LENGTH_LIMIT)});
+        mSendButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Message message = new Message(mMessageEditText.getText().toString(),mUsername,null);
+                databaseReference.push().setValue(message);
+                mMessageEditText.setText("");
+            }
+        });
+
         childEventListener = new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                Message message = dataSnapshot.getValue(Message.class);
-                mMessageAdapter.add(message);
+
+                    Message message = dataSnapshot.getValue(Message.class);
+                    mMessageAdapter.add(message);
+
             }
 
             @Override
@@ -132,8 +136,8 @@ public class MainActivity extends Activity {
 
             }
         };
-
         databaseReference.addChildEventListener(childEventListener);
+
 
 
     }

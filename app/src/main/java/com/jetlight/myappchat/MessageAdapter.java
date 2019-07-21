@@ -15,16 +15,16 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 public class MessageAdapter extends ArrayAdapter<Message> {
-    public MessageAdapter(@NonNull Context context, int resource, @NonNull List<Message> objects) {
+    public MessageAdapter(Context context, int resource, List<Message> objects) {
         super(context, resource, objects);
     }
 
-    @NonNull
     @Override
-    public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-        if(convertView == null){
-            convertView =((Activity) getContext()).getLayoutInflater().inflate(R.layout.item_message, parent, false);
+    public View getView(int position, View convertView, ViewGroup parent) {
+        if (convertView == null) {
+            convertView = ((Activity) getContext()).getLayoutInflater().inflate(R.layout.item_message, parent, false);
         }
+
         ImageView photoImageView = (ImageView) convertView.findViewById(R.id.photoImageView);
         TextView messageTextView = (TextView) convertView.findViewById(R.id.messageTextView);
         TextView authorTextView = (TextView) convertView.findViewById(R.id.nameTextView);

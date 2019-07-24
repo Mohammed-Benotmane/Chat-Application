@@ -1,6 +1,7 @@
 package com.jetlight.myappchat;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputFilter;
@@ -169,9 +170,26 @@ public class MainActivity extends Activity {
     }
 
     @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == RC_SIGN_IN){
+            if(resultCode == RESULT_OK){
+                Toast.makeText(this,"signed in",Toast.LENGTH_SHORT).show();
+            }else if(resultCode == RESULT_CANCELED){
+                Toast.makeText(this,"sign in canceled",Toast.LENGTH_SHORT).show();
+                finish();
+            }
+        }
+    }
+
+    @Override
     protected void onPause() {
         super.onPause();
-        fireBaseAuth.removeAuthStateListener(authStateListener);
+        if(authStateListener!=null) {
+            fireBaseAuth.removeAuthStateListener(authStateListener);
+        }
+        detachDatabase();
+        mMessageAdapter.clear();
     }
 
     @Override
@@ -189,39 +207,48 @@ public class MainActivity extends Activity {
     private void onSignedOutCleanup(){
         mUsername = ANONYMOUS;
         mMessageAdapter.clear();
+        detachDatabase();
     }
 
-    private void attachDatabase(){
-        childEventListener = new ChildEventListener() {
-            @Override
-            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+    private void attachDatabase() {
+        if (childEventListener == null) {
+            childEventListener = new ChildEventListener() {
+                @Override
+                public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
 
-                Message message = dataSnapshot.getValue(Message.class);
-                mMessageAdapter.add(message);
+                    Message message = dataSnapshot.getValue(Message.class);
+                    mMessageAdapter.add(message);
 
-            }
+                }
 
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                @Override
+                public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
 
-            }
+                }
 
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+                @Override
+                public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
 
-            }
+                }
 
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                @Override
+                public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
 
-            }
+                }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
 
-            }
-        };
-        databaseReference.addChildEventListener(childEventListener);
+                }
+            };
+            databaseReference.addChildEventListener(childEventListener);
+        }
+    }
+    private void detachDatabase(){
+        if(childEventListener != null){
+        databaseReference.removeEventListener(childEventListener);
+        childEventListener =null;
+        }
     }
     /*
     @Override

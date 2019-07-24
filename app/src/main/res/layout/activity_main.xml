@@ -10,6 +10,7 @@
     android:paddingTop="10dp"
     tools:context=".MainActivity">
 
+
     <ListView
         android:id="@+id/messageListView"
         android:layout_width="match_parent"

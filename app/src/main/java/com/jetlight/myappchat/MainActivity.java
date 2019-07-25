@@ -19,6 +19,9 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -28,10 +31,12 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -69,8 +74,8 @@ public class MainActivity extends Activity {
         mUsername = ANONYMOUS;
         firebaseDatabase = FirebaseDatabase.getInstance();
         fireBaseAuth =  FirebaseAuth.getInstance();
-        databaseReference = firebaseDatabase.getReference().child("messages");
         firebaseStorage = FirebaseStorage.getInstance();
+        databaseReference = firebaseDatabase.getReference().child("messages");
         storageReference = firebaseStorage.getReference().child("chat_photos");
 
         mProgressBar = (ProgressBar) findViewById(R.id.progressBar);
@@ -194,6 +199,26 @@ public class MainActivity extends Activity {
             }else if(requestCode == RC_PHOTO_PICKER && resultCode == RESULT_OK){
                 Uri selectedImageUri = data.getData();
                 StorageReference photoRef = storageReference.child(selectedImageUri.getLastPathSegment());
+                photoRef.putFile(selectedImageUri).addOnSuccessListener(this, new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        Task<Uri> download = taskSnapshot.getMetadata().getReference().getDownloadUrl();
+                        try {
+                            Tasks.await(download);
+                        } catch (ExecutionException e) {
+                            e.printStackTrace();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        Uri moh=download.getResult();
+
+
+
+                        Message msg = new Message(null,mUsername,moh.toString());
+                        databaseReference.push().setValue(msg);
+                    }
+                });
+
             }
         }
     }

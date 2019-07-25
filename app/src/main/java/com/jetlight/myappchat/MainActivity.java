@@ -2,6 +2,7 @@ package com.jetlight.myappchat;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputFilter;
@@ -25,6 +26,8 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -51,6 +54,8 @@ public class MainActivity extends Activity {
     private ChildEventListener childEventListener;
     private FirebaseAuth fireBaseAuth;
     private FirebaseAuth.AuthStateListener authStateListener;
+    private FirebaseStorage firebaseStorage;
+    private StorageReference storageReference;
     private static final int RC_SIGN_IN=1;
     private static final int RC_PHOTO_PICKER = 2;
 
@@ -65,6 +70,8 @@ public class MainActivity extends Activity {
         firebaseDatabase = FirebaseDatabase.getInstance();
         fireBaseAuth =  FirebaseAuth.getInstance();
         databaseReference = firebaseDatabase.getReference().child("messages");
+        firebaseStorage = FirebaseStorage.getInstance();
+        storageReference = firebaseStorage.getReference().child("chat_photos");
 
         mProgressBar = (ProgressBar) findViewById(R.id.progressBar);
         mMessageListView = (ListView) findViewById(R.id.messageListView);
@@ -184,6 +191,9 @@ public class MainActivity extends Activity {
             }else if(resultCode == RESULT_CANCELED){
                 Toast.makeText(this,"sign in canceled",Toast.LENGTH_SHORT).show();
                 finish();
+            }else if(requestCode == RC_PHOTO_PICKER && resultCode == RESULT_OK){
+                Uri selectedImageUri = data.getData();
+                StorageReference photoRef = storageReference.child(selectedImageUri.getLastPathSegment());
             }
         }
     }

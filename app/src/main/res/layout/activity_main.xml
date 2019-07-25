@@ -60,4 +60,13 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"/>
+
+    <Button
+        android:id="@+id/signOut"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/messageListView"
+        android:layout_alignParentTop="true"
+        android:onClick="signOut"
+        android:text="signOut" />
 </RelativeLayout>

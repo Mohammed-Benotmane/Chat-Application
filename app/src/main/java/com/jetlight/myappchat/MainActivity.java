@@ -19,6 +19,8 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
+import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
@@ -188,39 +190,32 @@ public class MainActivity extends Activity {
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, final Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == RC_SIGN_IN){
             if(resultCode == RESULT_OK){
                 Toast.makeText(this,"signed in",Toast.LENGTH_SHORT).show();
-            }else if(resultCode == RESULT_CANCELED){
-                Toast.makeText(this,"sign in canceled",Toast.LENGTH_SHORT).show();
+            }else if(resultCode == RESULT_CANCELED) {
+                Toast.makeText(this, "sign in canceled", Toast.LENGTH_SHORT).show();
                 finish();
-            }else if(requestCode == RC_PHOTO_PICKER && resultCode == RESULT_OK){
-                Uri selectedImageUri = data.getData();
-                StorageReference photoRef = storageReference.child(selectedImageUri.getLastPathSegment());
-                photoRef.putFile(selectedImageUri).addOnSuccessListener(this, new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            }
+
+        }else if(requestCode == RC_PHOTO_PICKER && resultCode == RESULT_OK){
+            //Toast.makeText(MainActivity.this,"toz",Toast.LENGTH_SHORT).show();
+
+            final Uri selectedImageUri = data.getData();
+                final StorageReference photoRef = storageReference.child(selectedImageUri.getLastPathSegment());
+
+                photoRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                     @Override
-                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        Task<Uri> download = taskSnapshot.getMetadata().getReference().getDownloadUrl();
-                        try {
-                            Tasks.await(download);
-                        } catch (ExecutionException e) {
-                            e.printStackTrace();
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        Uri moh=download.getResult();
+                    public void onSuccess(Uri uri) {
+                        Toast.makeText(MainActivity.this,"toz123",Toast.LENGTH_SHORT).show();
 
-
-
-                        Message msg = new Message(null,mUsername,moh.toString());
+                        Message msg = new Message(null,mUsername,uri.toString());
                         databaseReference.push().setValue(msg);
                     }
                 });
-
             }
-        }
     }
 
     @Override

@@ -201,15 +201,14 @@ public class MainActivity extends Activity {
             }
 
         }else if(requestCode == RC_PHOTO_PICKER && resultCode == RESULT_OK){
-            //Toast.makeText(MainActivity.this,"toz",Toast.LENGTH_SHORT).show();
 
             final Uri selectedImageUri = data.getData();
                 final StorageReference photoRef = storageReference.child(selectedImageUri.getLastPathSegment());
-
+                photoRef.putFile(selectedImageUri);
                 photoRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                     @Override
                     public void onSuccess(Uri uri) {
-                        Toast.makeText(MainActivity.this,"toz123",Toast.LENGTH_SHORT).show();
+
 
                         Message msg = new Message(null,mUsername,uri.toString());
                         databaseReference.push().setValue(msg);

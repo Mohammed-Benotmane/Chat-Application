@@ -188,33 +188,33 @@ public class MainActivity extends Activity {
             }
         };
     }
-
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, final Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == RC_SIGN_IN){
-            if(resultCode == RESULT_OK){
-                Toast.makeText(this,"signed in",Toast.LENGTH_SHORT).show();
-            }else if(resultCode == RESULT_CANCELED) {
-                Toast.makeText(this, "sign in canceled", Toast.LENGTH_SHORT).show();
+        if (requestCode == RC_SIGN_IN) {
+            if (resultCode == RESULT_OK) {
+                Toast.makeText(getApplicationContext(), "Signed In successfully!", Toast.LENGTH_SHORT).show();
+            } else if (resultCode == RESULT_CANCELED) {
+                Toast.makeText(getApplicationContext(), "Signed In Cancalled!", Toast.LENGTH_SHORT).show();
                 finish();
             }
-
-        }else if(requestCode == RC_PHOTO_PICKER && resultCode == RESULT_OK){
-
-            final Uri selectedImageUri = data.getData();
-                final StorageReference photoRef = storageReference.child(selectedImageUri.getLastPathSegment());
-                photoRef.putFile(selectedImageUri);
-                photoRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                    @Override
-                    public void onSuccess(Uri uri) {
-
-
-                        Message msg = new Message(null,mUsername,uri.toString());
-                        databaseReference.push().setValue(msg);
-                    }
-                });
-            }
+        } else if (requestCode == RC_PHOTO_PICKER && resultCode == RESULT_OK) {
+            final Uri photoUri = data.getData();
+            final StorageReference tempStorage = storageReference.child(photoUri.getLastPathSegment());
+            UploadTask uploadTask = tempStorage.putFile(photoUri);
+            uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    tempStorage.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+                            Message message = new Message(null, mUsername, uri.toString());
+                            databaseReference.push().setValue(message);
+                        }
+                    });
+                }
+            });
+        }
     }
 
     @Override

@@ -21,4 +21,4 @@ Feel free to fork this project and add whatever you like. If you have any sugges
 [Jetlighters](https://github.com/JetLightStudio) having fun.
 
 ### Tutorial Link:
-![Udacity Course](https://classroom.udacity.com/courses/ud0352)
+[Udacity Course](https://classroom.udacity.com/courses/ud0352)

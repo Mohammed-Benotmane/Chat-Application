@@ -6,7 +6,7 @@
 this is an android Chat Application using FireBase
 
 ## ScreenShot:
-<img src="ScreenShot/screen.gif" />
+<img src="ScreenShot/screen.jpg" />
 
 ## Tools & languages:
 * Android Studio
